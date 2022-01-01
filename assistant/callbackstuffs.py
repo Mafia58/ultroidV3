@@ -461,18 +461,17 @@ async def _(e):
 async def _(e):
     if not e.is_private:
         return
-    await e.edit(
-        "Send your FOLDER ID\n\n"
+    msg = ("Send your FOLDER ID\n\n"
         + "For FOLDER ID:\n"
         + "1. Open Google Drive App.\n"
         + "2. Create Folder.\n"
         + "3. Make that folder public.\n"
         + "4. Send link of that folder."
     )
+    await e.delete()
     async with asst.conversation(e.sender_id) as conv:
-        reply = conv.wait_event(events.NewMessage(from_users=e.sender_id))
-        repl = await reply
-        id = repl.text
+        await conv.send_message(msg)
+        id = (await conv.get_response()).text
         if id.startswith("https"):
             id = id.split("?id=")[-1]
         udB.set_key("GDRIVE_FOLDER_ID", id)
